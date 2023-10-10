@@ -3,7 +3,7 @@ import socket
 import struct
 import sys
 import subprocess
-import argparse  # Import argparse library for command-line argument parsing
+import argparse 
 
 def subnet_to_ip_range(subnet, port_scan=False):  # Add port_scan argument with a default value of False
     try:
