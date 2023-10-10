@@ -1,4 +1,5 @@
-mport socket
+#!/usr/bin/python3
+import socket
 import struct
 import sys
 import subprocess
