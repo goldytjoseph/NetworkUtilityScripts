@@ -12,8 +12,6 @@ def scan_ip(ip):
 
 def subnet_to_ip_range(subnet):
     try:
-        # ... (Previous code remains the same)
-
         print(f'Subnet: {subnet}')
         print(f'IP Range: {start} - {end}')
         print('All IPs:')
