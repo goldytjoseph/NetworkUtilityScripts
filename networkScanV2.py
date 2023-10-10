@@ -3,9 +3,9 @@ import socket
 import struct
 import sys
 import subprocess
-import argparse 
+import argparse
 
-def subnet_to_ip_range(subnet, port_scan=False):  # Add port_scan argument with a default value of False
+def subnet_to_ip_range(subnet, port_scan=False, start_port=1, end_port=1024, timeout=1):
     try:
         d, s, c = socket.inet_aton, struct, '!I'
         f = lambda n: s.pack(c, n)
@@ -29,10 +29,10 @@ def subnet_to_ip_range(subnet, port_scan=False):  # Add port_scan argument with 
             color = "\033[32m" if status == "up" else "\033[31m"
             print(f'{color}{i}  \033[0m')
 
-        if port_scan:  # Check if port_scan is True, and if so, perform a port scan
+        if port_scan:  
             print('Port Scan Results:')
             for i in ips:
-                open_ports = scan_ports(i, range(1, 1025))  # Scan ports from 1 to 1024
+                open_ports = scan_ports(i, range(start_port, end_port + 1), timeout)
                 if open_ports:
                     print(f'{i}: Open Ports - {open_ports}')
 
@@ -54,11 +54,11 @@ def ping(ip):
     except subprocess.CalledProcessError:
         return False
 
-def scan_ports(ip, ports):
+def scan_ports(ip, ports, timeout):
     open_ports = []
     for port in ports:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(1)
+        sock.settimeout(timeout)
         result = sock.connect_ex((ip, port))
         if result == 0:
             open_ports.append(port)
@@ -69,7 +69,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Subnet to IP Range Converter with Port Scan')
     parser.add_argument('subnet', type=str, help='The subnet to convert to an IP range (e.g., 192.168.1.0/24)')
     parser.add_argument('-p', '--port-scan', action='store_true', help='Perform a port scan on each IP address')
-    
-    args = parser.parse_args()
-    subnet_to_ip_range(args.subnet, args.port_scan)
+    parser.add_argument('--start-port', type=int, default=1, help='Start port for port scan (default: 1)')
+    parser.add_argument('--end-port', type=int, default=1024, help='End port for port scan (default: 1024)')
+    parser.add_argument('--timeout', type=int, default=1, help='Timeout for port scan in seconds (default: 1)')
 
+    args = parser.parse_args()
+    subnet_to_ip_range(args.subnet, args.port_scan, args.start_port, args.end_port, args.timeout)
