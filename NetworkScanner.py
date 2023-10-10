@@ -5,8 +5,6 @@ import sys
 import subprocess
 import concurrent.futures
 
-# ... (Previous code remains the same)
-
 def scan_ip(ip):
     status = "up" if ping(ip) else "down"
     color = "\033[32m" if status == "up" else "\033[31m"
